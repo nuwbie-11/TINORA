@@ -1,2 +1,8 @@
 # TINORA
-Times and Objective Reminder Apps
+
+Times and Objectives Reminder App (Task Management App)
+
+## Features 
+- User and Auth
+- Tasks
+- Point System (OPT)
