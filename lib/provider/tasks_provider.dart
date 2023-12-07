@@ -1,8 +1,8 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:tinora/model/profile_model.dart';
+import 'package:tinora/model/tasks_model.dart';
 
-class ProfileProvider {
+class TasksProvider {
   static const _version = 1;
   static const _dbName = 'myDatabase.db';
 
@@ -13,13 +13,12 @@ class ProfileProvider {
       join(dbPath, _dbName),
       onOpen: (db) async {
         await db.execute(
-          '''CREATE TABLE IF NOT EXISTS Profile(
+          '''CREATE TABLE IF NOT EXISTS Task(
               id INTEGER PRIMARY KEY AUTOINCREMENT,
-              userId INTEGER NOT NULL,
-              name TEXT NOT NULL,
-              level INTEGER DEFAULT 0,
-              experience REAL DEFAULT 0,
-              FOREIGN KEY (userId) REFERENCES User(id) ON DELETE CASCADE
+              description TEXT NOT NULL,
+              deadline INTEGER,
+              isImportant INTEGER DEFAULT 0,
+              createdAt INTEGER
             )''',
         );
       },
@@ -27,54 +26,54 @@ class ProfileProvider {
     );
   }
 
-  static Future<void> addProfile(ProfileModel profile) async {
+  static Future<int> addTasks(TasksModel task) async {
     final db = await initDatabases();
-    await db.insert(
-      'Profile',
-      profile.toMap(),
+    print("this is ${db}");
+    return await db.insert(
+      'Task',
+      task.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    db.close();
   }
 
-  static Future<int> updateProfile(ProfileModel profile) async {
+  static Future<int> updateTasks(TasksModel task) async {
     final db = await initDatabases();
     return await db.update(
-      'Profile',
-      profile.toMap(),
+      'Task',
+      task.toMap(),
       where: 'id = ?',
-      whereArgs: [profile.id],
+      whereArgs: [task.id],
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
 
-  static Future<int> deleteProfile(ProfileModel profile) async {
+  static Future<int> deleteTasks(TasksModel task) async {
     final db = await initDatabases();
     return await db.delete(
-      'Profile',
+      'Task',
       where: 'id = ?',
-      whereArgs: [profile.id],
+      whereArgs: [task.id],
     );
   }
 
-  static Future<List<ProfileModel>?> getAllProfile() async {
+  static Future<List<TasksModel>?> getAllTasks() async {
     final db = await initDatabases();
 
-    final List<Map<String, dynamic>> maps = await db.query("User");
+    final List<Map<String, dynamic>> maps = await db.query("Task");
     if (maps.isEmpty) {
       return null;
     }
     return List.generate(
-        maps.length, (index) => ProfileModel.fromJson(maps[index]));
+        maps.length, (index) => TasksModel.fromJson(maps[index]));
   }
 
-  static Future<Map?> findProfile(int userId) async {
+  static Future<Map?> findTasks(int taskId) async {
     final db = await initDatabases();
 
     List<Map> maps = await db.query(
-      'Profile',
+      'Task',
       where: 'userId=?',
-      whereArgs: [userId],
+      whereArgs: [taskId],
     );
 
     // print(maps.first['id']);

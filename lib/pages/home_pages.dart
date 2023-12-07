@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tinora/model/profile_model.dart';
+import 'package:tinora/model/tasks_model.dart';
 import 'package:tinora/pages/auth_page.dart';
 import 'package:tinora/provider/profile_provider.dart';
+import 'package:tinora/provider/tasks_provider.dart';
 
 class HomePages extends StatefulWidget {
   final ProfileModel? profile;
-  const HomePages({Key? key, this.profile}) : super(key: key);
+  final TasksModel? tasks;
+  const HomePages({Key? key, this.profile, this.tasks}) : super(key: key);
 
   @override
   State<HomePages> createState() => _HomePagesState();
@@ -21,11 +24,13 @@ class _HomePagesState extends State<HomePages> {
   String dayName = DateFormat('EEEE, MMMM yyyy').format(DateTime.now());
   late Timer _timer;
   Map _userActive = {};
+  List<TasksModel> _task = [];
 
   @override
   void initState() {
     super.initState();
     findProfile();
+    createTask();
     _timer =
         Timer.periodic(const Duration(milliseconds: 500), (timer) => _update());
   }
@@ -38,9 +43,9 @@ class _HomePagesState extends State<HomePages> {
 
   createProfile() async {
     final ProfileModel model = ProfileModel(
-      userId: 1,
-      name: "Astra Bilis",
-      level: 100,
+      userId: 3,
+      name: "Mondoes",
+      level: 10,
       experience: 0.0,
       id: widget.profile?.id,
     );
@@ -48,6 +53,23 @@ class _HomePagesState extends State<HomePages> {
       await ProfileProvider.addProfile(model);
       print("Finished");
     }
+  }
+
+  createTask() async {
+    final TasksModel model = TasksModel(
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      deadline: DateTime(2024, 12, 30, 0, 0).millisecondsSinceEpoch,
+      description: "REMINDER OF YK",
+      id: widget.tasks?.id,
+      isImportant: 1,
+    );
+    if (widget.tasks == null) {
+      await TasksProvider.addTasks(model);
+      print("Finished");
+    }
+    TasksProvider.getAllTasks().then((value) => setState(() {
+          _task = value!;
+        }));
   }
 
   findProfile() async {
@@ -151,6 +173,7 @@ class _HomePagesState extends State<HomePages> {
                     Transform.translate(
                       offset: const Offset(0, -30),
                       child: Container(
+                        child: Center(child: Text("Tasks")),
                         height: 30,
                         width: screenWidth,
                         decoration: const BoxDecoration(
@@ -174,9 +197,12 @@ class _HomePagesState extends State<HomePages> {
                               alignment: Alignment.bottomRight,
                               child: ElevatedButton.icon(
                                 onPressed: () {
-                                  logOut();
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => AuthPages()));
+                                  createTask();
+                                  // createProfile();
+
+                                  // logOut();
+                                  // Navigator.of(context).push(MaterialPageRoute(
+                                  //     builder: (context) => AuthPages()));
                                   // findProfile();
                                 },
                                 icon: const Icon(Icons.exit_to_app),
@@ -187,6 +213,106 @@ class _HomePagesState extends State<HomePages> {
                         ],
                       ),
                     ),
+                    GridView.count(
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 24,
+                      // crossAxisSpacing: 8,
+                      children: [
+                        for (var i in _task)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Draggable(
+                              childWhenDragging: null,
+                              feedback: Material(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                      color: Colors.amber.shade400,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Center(
+                                    child: Text(
+                                      i.toMap()['description'],
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.amber,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 18,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        i.toMap()['description'],
+                                      ),
+                                      Text(
+                                        DateFormat('dd-MM-yyyy')
+                                            .format(DateTime
+                                                .fromMillisecondsSinceEpoch(
+                                                    i.toMap()['deadline']))
+                                            .toString(),
+                                        style: TextStyle(
+                                          color: Colors.deepPurple,
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: Text(
+                                            DateTime.now()
+                                                        .millisecondsSinceEpoch >
+                                                    i.toMap()['deadline']
+                                                ? 'Overdue'
+                                                : "${DateTime.fromMillisecondsSinceEpoch(i.toMap()['deadline']).difference(DateTime.now()).inDays} Days Remaining",
+                                            style: TextStyle(
+                                              color: DateTime.now()
+                                                          .millisecondsSinceEpoch >
+                                                      i.toMap()['deadline']
+                                                  ? Colors.red
+                                                  : Colors.green,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    // ListView.builder(
+                    //   itemCount: _task.length,
+                    //   itemBuilder: (BuildContext context, int ix) {
+                    //     return Container(
+                    //       color: Colors.red,
+                    //       child: Center(
+                    //         child: Text((DateTime.fromMillisecondsSinceEpoch(
+                    //                 _task[ix].toMap()['createdAt']))
+                    //             .toString()),
+                    //       ),
+                    //     );
+                    //   },
+                    // )
                   ],
                 ),
               ),
