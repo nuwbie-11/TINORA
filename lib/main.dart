@@ -10,8 +10,8 @@ Future<void> main() async {
   runApp(MaterialApp(
     title: 'Tinora',
     theme: ThemeData(
-      primaryColor: const Color.fromRGBO(57, 68, 188, 1),
+      useMaterial3: true,
     ),
-    home: isLogged ? HomePages() : AuthPages(),
+    home: isLogged ? const HomePages() : AuthPages(),
   ));
 }

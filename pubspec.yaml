@@ -38,6 +38,8 @@ dependencies:
   path: ^1.8.1
   shared_preferences: ^2.1.1
   intl: ^0.18.1
+  curved_navigation_bar: ^1.0.3
+  flutter_floating_bottom_bar: ^1.2.0
 
 dev_dependencies:
   flutter_test:
