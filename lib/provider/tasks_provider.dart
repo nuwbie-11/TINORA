@@ -8,7 +8,6 @@ class TasksProvider {
 
   static Future<Database> initDatabases() async {
     String dbPath = await getDatabasesPath();
-    print(dbPath);
     return openDatabase(
       join(dbPath, _dbName),
       onOpen: (db) async {
@@ -28,7 +27,6 @@ class TasksProvider {
 
   static Future<int> addTasks(TasksModel task) async {
     final db = await initDatabases();
-    print("this is ${db}");
     return await db.insert(
       'Task',
       task.toMap(),

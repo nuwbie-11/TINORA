@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tinora/pages/auth_page.dart';
 import 'package:tinora/pages/home_pages.dart';
+import 'package:tinora/pages/landing_pages.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +12,6 @@ Future<void> main() async {
     theme: ThemeData(
       useMaterial3: true,
     ),
-    home: isLogged ? const HomePages() : AuthPages(),
+    home: isLogged ? const HomePages() : const LandingPages(),
   ));
 }

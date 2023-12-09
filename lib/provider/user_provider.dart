@@ -11,7 +11,6 @@ class UserProvider {
 
   static Future<Database> initDatabases() async {
     String dbPath = await getDatabasesPath();
-    print(dbPath);
     return openDatabase(
       join(dbPath, _dbName),
       onCreate: (db, version) async {
@@ -75,7 +74,6 @@ class UserProvider {
     final db = await initDatabases();
 
     final List<Map<String, dynamic>> maps = await db.query("User");
-    print(maps.first);
     if (maps.isEmpty) {
       return null;
     }

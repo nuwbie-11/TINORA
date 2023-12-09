@@ -8,7 +8,6 @@ class ProfileProvider {
 
   static Future<Database> initDatabases() async {
     String dbPath = await getDatabasesPath();
-    print(dbPath);
     return openDatabase(
       join(dbPath, _dbName),
       onOpen: (db) async {
