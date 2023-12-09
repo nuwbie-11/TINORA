@@ -166,98 +166,106 @@ class _HomePagesState extends State<HomePages> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.only(top: 8.0),
-                  child: GridView.count(
-                    shrinkWrap: true,
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 24,
-                    // crossAxisSpacing: 8,
-                    children: [
-                      for (var i in _task)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Material(
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(15),
-                              focusColor: Colors.red,
-                              highlightColor: Colors.greenAccent,
-                              splashColor: Colors.yellowAccent,
-                              hoverColor: Colors.blueAccent,
-                              onLongPress: () =>
-                                  _showTaskActionDialog(tasks: i),
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  color: usedColor[
-                                      _task.indexOf(i) % usedColor.length],
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 18,
+                  child: RefreshIndicator(
+                    onRefresh: () {
+                      _getTasks();
+                      return Future.delayed(Duration(seconds: 2));
+                    },
+                    child: GridView.count(
+                      shrinkWrap: true,
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 24,
+                      // crossAxisSpacing: 8,
+                      children: [
+                        for (var i in _task)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Material(
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(15),
+                                focusColor: Colors.red,
+                                highlightColor: Colors.greenAccent,
+                                splashColor: Colors.yellowAccent,
+                                hoverColor: Colors.blueAccent,
+                                onLongPress: () =>
+                                    _showTaskActionDialog(tasks: i),
+                                child: Ink(
+                                  decoration: BoxDecoration(
+                                    color: usedColor[
+                                        _task.indexOf(i) % usedColor.length],
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            DateFormat('dd-MM-yyyy')
-                                                .format(DateTime
-                                                    .fromMillisecondsSinceEpoch(
-                                                        i.toMap()['deadline']))
-                                                .toString(),
-                                            style: const TextStyle(
-                                              color: Colors.deepPurple,
-                                              fontFamily: 'Montserrat',
-                                              fontWeight: FontWeight.w700,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 18,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              DateFormat('dd-MM-yyyy')
+                                                  .format(DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                          i.toMap()[
+                                                              'deadline']))
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                color: Colors.deepPurple,
+                                                fontFamily: 'Montserrat',
+                                                fontWeight: FontWeight.w700,
+                                              ),
                                             ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.topRight,
-                                            child: i.toMap()['isImportant'] == 1
-                                                ? Icon(
-                                                    Icons.star_rounded,
-                                                    color: Colors.yellow,
-                                                  )
-                                                : Text(""),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(i.toMap()['description'],
-                                          style: TextStyle(
-                                              // color: Colors.white,
-                                              fontFamily: 'Montserrat')),
-                                      Expanded(
-                                        child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Text(
-                                            DateTime.now()
-                                                        .millisecondsSinceEpoch >
-                                                    i.toMap()['deadline']
-                                                ? 'Overdue'
-                                                : "${DateTime.fromMillisecondsSinceEpoch(i.toMap()['deadline']).difference(DateTime.now()).inDays} Days ${DateTime.fromMillisecondsSinceEpoch(i.toMap()['deadline']).difference(DateTime.now()).inHours} Hours",
+                                            Align(
+                                              alignment: Alignment.topRight,
+                                              child:
+                                                  i.toMap()['isImportant'] == 1
+                                                      ? Icon(
+                                                          Icons.star_rounded,
+                                                          color: Colors.yellow,
+                                                        )
+                                                      : Text(""),
+                                            ),
+                                          ],
+                                        ),
+                                        Text(i.toMap()['description'],
                                             style: TextStyle(
-                                              color: DateTime.now()
+                                                // color: Colors.white,
+                                                fontFamily: 'Montserrat')),
+                                        Expanded(
+                                          child: Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: Text(
+                                              DateTime.now()
                                                           .millisecondsSinceEpoch >
                                                       i.toMap()['deadline']
-                                                  ? Colors.red
-                                                  : Colors.green,
-                                              fontWeight: FontWeight.bold,
+                                                  ? 'Overdue'
+                                                  : "${DateTime.fromMillisecondsSinceEpoch(i.toMap()['deadline']).difference(DateTime.now()).inDays} Days ${DateTime.fromMillisecondsSinceEpoch(i.toMap()['deadline']).difference(DateTime.now()).inHours} Hours",
+                                              style: TextStyle(
+                                                color: DateTime.now()
+                                                            .millisecondsSinceEpoch >
+                                                        i.toMap()['deadline']
+                                                    ? Colors.red
+                                                    : Colors.green,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                    ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ).animate().shake().scale(),
+                              ).animate().shake().scale(),
+                            ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
