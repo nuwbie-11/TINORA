@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
@@ -35,6 +36,26 @@ class _TasksActionsState extends State<TasksActions> {
     }
   }
 
+  @override
+  void dispose() {
+    desc.dispose();
+    super.dispose();
+  }
+
+  Future<bool> _AddViaFirebase() async {
+    final TasksModel model = TasksModel(
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      deadline: _deadlineDate!.millisecondsSinceEpoch,
+      description: desc.value.text,
+      id: widget.task?.id,
+      isImportant: isChecked,
+    );
+    var response =
+        await FirebaseFirestore.instance.collection('tasks').add(model.toMap());
+    print(response);
+    return true;
+  }
+
   Future<bool> _checkData() async {
     if ((desc.value.text != "") && (_deadlineDate != null)) {
       return true;
@@ -48,7 +69,7 @@ class _TasksActionsState extends State<TasksActions> {
       deadline: _deadlineDate!.millisecondsSinceEpoch,
       description: desc.value.text,
       id: widget.task?.id,
-      isImportant: isChecked ? 1 : 0,
+      isImportant: isChecked,
     );
     if (widget.task == null) {
       await TasksProvider.addTasks(model);
@@ -65,7 +86,7 @@ class _TasksActionsState extends State<TasksActions> {
       deadline: _deadlineDate!.millisecondsSinceEpoch,
       description: desc.value.text,
       id: widget.task?.id,
-      isImportant: isChecked ? 1 : 0,
+      isImportant: isChecked,
     );
     TasksProvider.updateTasks(model);
   }
@@ -156,7 +177,8 @@ class _TasksActionsState extends State<TasksActions> {
                   onPressed: () {
                     _checkData().then((value) {
                       if (value) {
-                        createTask();
+                        // createTask();
+                        _AddViaFirebase();
                         Navigator.pop(context);
                       }
                       setState(() {

@@ -40,6 +40,8 @@ dependencies:
   intl: ^0.18.1
   curved_navigation_bar: ^1.0.3
   flutter_floating_bottom_bar: ^1.2.0
+  cloud_firestore: ^4.13.5
+  firebase_core: ^2.24.2
 
 dev_dependencies:
   flutter_test:

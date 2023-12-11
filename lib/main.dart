@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tinora/pages/home_pages.dart';
@@ -6,6 +7,7 @@ import 'package:tinora/pages/landing_pages.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  await Firebase.initializeApp();
   var isLogged = prefs.containsKey('user');
   runApp(MaterialApp(
     title: 'Tinora',

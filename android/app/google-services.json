@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "503974653",
+    "project_id": "tinora-74f21",
+    "storage_bucket": "tinora-74f21.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:503974653:android:c9c85760942e0e20c98c94",
+        "android_client_info": {
+          "package_name": "com.example.tinora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBy1lCp1ZVFScR4E9iQxtVjV-KB2s4n4-U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

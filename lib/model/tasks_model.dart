@@ -3,14 +3,14 @@ class TasksModel {
   final int createdAt;
   final int deadline;
   final String description;
-  final int isImportant;
+  final bool isImportant;
 
   TasksModel({
     this.id,
     required this.createdAt,
     required this.deadline,
     required this.description,
-    this.isImportant = 0,
+    this.isImportant = false,
   });
 
   factory TasksModel.fromJson(Map<dynamic, dynamic> map) {

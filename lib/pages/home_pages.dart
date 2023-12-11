@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -42,7 +43,8 @@ class _HomePagesState extends State<HomePages> {
   @override
   void initState() {
     super.initState();
-    _getTasks();
+    // _getTasks();
+    _getTaskViaFirebase();
 
     _timer =
         Timer.periodic(const Duration(milliseconds: 500), (timer) => _update());
@@ -67,6 +69,20 @@ class _HomePagesState extends State<HomePages> {
     TasksProvider.getAllTasks().then((value) => setState(() {
           _task = value!;
         }));
+  }
+
+  Future _getTaskViaFirebase() async {
+    await FirebaseFirestore.instance
+        .collection('tasks')
+        .get()
+        .then((snapshot) => snapshot.docs.forEach((element) {
+              print(element.reference.id);
+              FirebaseFirestore.instance
+                  .collection('tasks')
+                  .doc(element.reference.id)
+                  .get()
+                  .then((value) => print(value.data()));
+            }));
   }
 
   _logOut() async {
